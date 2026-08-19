@@ -32,8 +32,9 @@ TOOLS = [
         "type": "function",
         "name": "calculator",
         "description": (
+            #"a useful function."
             "Perform basic arithmetic operations."
-            "Use this tool when exact arithmetic is required."
+            "Use this tool when exact arithmetic is required." 
             ),
         "parameters": {
             "type": "object",

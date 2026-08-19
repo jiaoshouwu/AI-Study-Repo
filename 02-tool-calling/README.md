@@ -33,3 +33,8 @@ User
 ## Question for next day
 
 What happens when an Agent needs to call tools repeatedly?
+
+
+### observation
+if I change the description of tool to inacurate sentence, such as "A useful funciton" , the tool will not be called anymore. 
+so Tool description matters. 
