@@ -1,4 +1,5 @@
 import os
+import time
 
 from openai import OpenAI
 
@@ -23,9 +24,11 @@ def ask_llm(prompt: str) -> str:
 if __name__ == "__main__":
     user_input = input("You: ")
 
-
+    start = time.time()
     answer = ask_llm(user_input)
-    
+    elapsed = time.time() - start
+
+    print(f"\nResponse time: {elapsed:.2f} seconds")
 
     print(f"\n AI: {answer}")
 
