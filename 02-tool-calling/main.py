@@ -20,7 +20,7 @@ def calculator(a: float, b: float, operation: str) -> float:
 
     if operation == "divide":
         if b == 0:
-            return ValueError("Cannot divide by zero")
+            raise ValueError("Cannot divide by zero")
 
 
         return a / b

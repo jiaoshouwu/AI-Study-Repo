@@ -25,10 +25,10 @@ User
 
 ## Tests
 
-- [ ] multiplication
-- [ ] division
-- [ ] normal conversation without tool
-- [ ] divide by zero
+- [x] multiplication
+- [x] division
+- [x] normal conversation without tool
+- [x] divide by zero
 
 ## Question for next day
 
@@ -38,3 +38,6 @@ What happens when an Agent needs to call tools repeatedly?
 ### observation
 if I change the description of tool to inacurate sentence, such as "A useful funciton" , the tool will not be called anymore. 
 so Tool description matters. 
+
+
+when I did the test "divide by zero", the tool is not called as expected,even after I changed the "return ValueError" in main.py to "raise ValueError"
