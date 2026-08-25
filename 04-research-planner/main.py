@@ -48,7 +48,7 @@ Topic: {topic}
     return questions
 
 
-def research_question(question: str) -> str:
+def research_question(question: str, trace: list) -> str:
     prompt = f"""
 Research the question below: 
 
@@ -73,6 +73,12 @@ Question:
         input=prompt,
     )
 
+    trace.append({
+        "question": question,
+        "action": "web_search",
+    })
+
+
     return response.output_text
 
 
@@ -86,7 +92,9 @@ def collect_evidence(questions: list[str],) -> list[dict]:
 
         print(f"Question: {question}")
 
-        result = research_question(question)
+        trace = []
+        result = research_question(question, trace)
+        print(trace)
 
         print(result)
 
@@ -175,4 +183,4 @@ if __name__ == "__main__":
     print("\n === Report ====\n")
 
     print(report)
-    
+
