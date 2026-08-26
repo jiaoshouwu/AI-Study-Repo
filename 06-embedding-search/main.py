@@ -136,6 +136,44 @@ def semantic_search(
 
     return results[:top_k]
 
+
+def keyword_search(
+    query: str,
+    chunks: list[dict]
+) -> list[dict]:
+
+    query_words = set(
+        query.lower().split()
+    )
+
+    results = []
+
+    for chunk in chunks:
+
+        text_words = set(
+            chunk["text"].lower().split()
+        )
+
+        score = len(query_words & text_words)
+
+        results.append(
+            {
+                "score": score,
+                "source": chunk["source"],
+                "text": chunk["text"],
+            }
+        )
+
+        return sorted(
+            results, 
+            key=lambda item:item["score"], 
+            reverse=True,
+        )[:3]
+
+
+    
+
+
 if __name__ == "__main__":
 
     print(
@@ -151,11 +189,17 @@ if __name__ == "__main__":
         "\nQuestion: "
     )
 
+    '''
     results = semantic_search(
         query,
         index,
         top_k=3,
     )
+    '''
+    results = keyword_search(
+        query,
+        index,
+    )   
 
     print(
         "\n=== Top Results ==="
