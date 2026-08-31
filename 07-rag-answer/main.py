@@ -11,6 +11,11 @@ EMBED_MODEL = os.getenv(
     "text-embedding-3-small",
 )
 
+MODEL = os.getenv(
+    "OPENAI_MODEL",
+    "gpt-5.6",
+)
+
 ROOT = Path(__file__).resolve().parent.parent
 
 SOURCE_DIRS = [
@@ -32,20 +37,29 @@ def load_chunks() -> list[dict]:
 
         text = path.read_text(encoding="utf-8")
 
-        paragraphs = text.split("\n\n")
+        sections = text.split("\n##")
 
-        for index, paragraph in enumerate(paragraphs):
+        for index, section in enumerate(sections):
 
-            paragraph = paragraph.strip()
+            section = section.strip()
 
-            if len(paragraph) < 30: 
+            if index > 0:
+                section = "## " + section
+
+            #Do not index learning questions
+            if section.lower().startswith("## question for"):
                 continue
+
+            if len(section) < 30:
+                continue
+
+
 
             chunks.append(
                 {
                     "source": str(path.relative_to(ROOT)),
                     "chunk_id": index,
-                    "text": paragraph,
+                    "text": section,
                 }
             )
 
@@ -134,8 +148,48 @@ def semantic_search(
         reverse = True,
     )
 
-    return results[:top_k]
+    diverse_results = []
 
+    seen_sources = set()
+
+    for result in results:
+        source = result["source"]
+
+        if source in seen_sources:
+            continue
+
+        diverse_results.append(result)
+
+        seen_sources.add(source)
+
+        if len(diverse_results) >= top_k:
+            break
+
+    return diverse_results
+
+
+def build_context(
+    results: list[dict],
+) -> str:
+    parts = []
+
+    for index, result in enumerate(
+        results,
+        start = 1, 
+    ):
+        parts.append(
+            f"""
+SOURCE {index}
+
+File: 
+{result["source"]}
+
+Content:
+{result["text"]}
+""".strip()
+        )
+
+    return "\n\n---\n\n".join(parts)
 
 def keyword_search(
     query: str,
@@ -171,13 +225,76 @@ def keyword_search(
     )[:3]
 
 
-    
+def answer_with_rag(
+    question: str,
+    results: list[dict],
+) -> str: 
 
+    context = build_context(
+        results
+    )
+
+    prompt = f"""
+  You are answering questions about my AI agent learning project
+
+  Use ONLY the supplied CONTEXT. 
+
+  Rules:
+  1. Do not use outside knowledge. 
+  2. Do not invent facts. 
+  3. If the context does not contain enough information to answer, 
+  reply exactly: 
+     I don't have enough information in the retrieved notes. 
+  4. Keep the answer concise. 
+  5. End with a source section. 
+  6. Only cite files that actually support the answer. 
+
+  Question:
+  {question}
+
+   Context: 
+   {context}
+"""
+
+    response = client.responses.create(
+        model = MODEL,
+        input = prompt,
+    )
+
+    return response.output_text
+
+
+def ask_knowledge_base(
+    question: str,
+    index:list[dict],
+) -> str:
+
+    results = semantic_search(
+        question,
+        index,
+        top_k = 5,
+    )
+
+    print("\n=== Retrieved Context ===")
+
+    for result in results:
+
+        print(f"\nScore: "
+              f"{result['score']:.4f}")
+
+        print(f"\nSource: "
+              f"{result['source']}")
+
+        print("\nChunk: ")
+        print(
+            result["text"][:500]
+        )
+    return answer_with_rag(question, results)
 
 if __name__ == "__main__":
 
     print(
-        "Building semantic index..."
+        "Building knowledge  index..."
     )
 
     index = build_index()
@@ -189,68 +306,12 @@ if __name__ == "__main__":
         "\nQuestion: "
     )
 
-
-    results = semantic_search(
+    answer = ask_knowledge_base(
         query,
-        index,
-        top_k=3,
-    )
-    '''
-    results = keyword_search(
-        query,
-        index,
-    )   
-    '''
-    print(
-        "\n=== Top Results ==="
+        index
     )
 
-    for rank, result in enumerate(
-        results,
-        start=1
-    ):
-        print(f"\n#{rank}")
+    print("\n=== Answer === \n")
 
-        print(
-            f"Score: "
-            f"{result["score"]:.4f}"
-        )
+    print(answer)
 
-        print(
-            f"Source: "
-            f"{result["source"]}"
-        )
-
-        print(result["text"])
-
-
-
-'''
-vectors = embed_texts(
-    [
-        "AI agents can use tools.",
-        "Bananas are yellow.",
-    ]
-)
-
-print(
-    len(vectors)
-)
-
-print(
-    len(vectors[0])
-)
-
-print(
-    vectors[0][:5]
-)
-
-
-chunks = load_chunks()
-
-print(f"Loaded {len(chunks)} chunks")
-
-
-for chunk in chunks[:5]:
-    print(chunk)
-'''
