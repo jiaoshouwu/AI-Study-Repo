@@ -8,7 +8,7 @@ client = OpenAI()
 MODEL = os.getenv("OPENAI_MODEL", "gpt-5.6")
 
 
-def calculator(a: float, b: float, operation: str) -> float: 
+def calculator(a: float, b: float, operation: str) -> float:
     if operation == "add":
         return a + b
 
@@ -22,20 +22,20 @@ def calculator(a: float, b: float, operation: str) -> float:
         if b == 0:
             raise ValueError("Cannot divide by zero")
 
-
         return a / b
 
     raise ValueError(f"Unknown operation: {operation}")
+
 
 TOOLS = [
     {
         "type": "function",
         "name": "calculator",
         "description": (
-            #"a useful function."
+            # "a useful function."
             "Perform basic arithmetic operations."
-            "Use this tool when exact arithmetic is required." 
-            ),
+            "Use this tool when exact arithmetic is required."
+        ),
         "parameters": {
             "type": "object",
             "properties": {
@@ -45,16 +45,16 @@ TOOLS = [
                 },
                 "b": {
                     "type": "number",
-                    "description": "the second number", 
+                    "description": "the second number",
                 },
                 "operation": {
-                    "type": "string", 
+                    "type": "string",
                     "enum": [
                         "add",
                         "subtract",
                         "multiply",
                         "divide",
-                        ],
+                    ],
                     "description": "the operation to perform",
                 },
             },
@@ -62,12 +62,13 @@ TOOLS = [
                 "a",
                 "b",
                 "operation",
-                ],
+            ],
             "additionalProperties": False,
         },
-        "strict" : True,
+        "strict": True,
     }
 ]
+
 
 def ask_with_tools(user_input: str) -> str:
     input_items = [
@@ -99,7 +100,7 @@ def ask_with_tools(user_input: str) -> str:
 
         if item.name == "calculator":
             args = json.loads(item.arguments)
-            try: 
+            try:
                 result = calculator(
                     a=args["a"],
                     b=args["b"],
@@ -107,7 +108,7 @@ def ask_with_tools(user_input: str) -> str:
                 )
             except ValueError as error:
                 result = f"Error: {error}"
-                
+
             print(f"Tool result: {result}")
 
             input_items.append(
@@ -130,7 +131,7 @@ def ask_with_tools(user_input: str) -> str:
 
 
 if __name__ == "__main__":
-    #print(calculator(23,87,"multiply"))
+    # print(calculator(23,87,"multiply"))
     user_input = input("You: ")
 
     answer = ask_with_tools(user_input)
