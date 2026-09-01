@@ -7,6 +7,12 @@ import json
 from pathlib import Path
 from openai  import OpenAI
 
+import sys
+
+force_rebuild = (
+    "--force-rebuild" in sys.argv
+)
+
 client = OpenAI()
 
 EMBED_MODEL = os.getenv(
@@ -234,18 +240,28 @@ def load_or_build_index() -> list[dict]:
 
     chunks = load_chunks()
 
-    signature = chunks_signature(chunks)
+    signature = chunks_signature(
+        chunks
+    )
 
-    cached_index = load_cached_index(signature)
+    if not force_rebuild:
 
-    if cached_index is not None:
-        return cached_index
+        cached_index = load_cached_index(signature)
 
-    print("Building new index...\n")
+        if cached_index is not None:
+            return cached_index
+
+
+    print(
+        "Building new index...\n"
+    )
 
     index = build_index(chunks)
 
-    save_index(index, signature)
+    save_index(
+        index, 
+        signature,
+    )
 
     return index
 
@@ -431,7 +447,7 @@ if __name__ == "__main__":
 
     #index = build_index()
 
-    index = load_or_build_index()
+    index = load_or_build_index(force_rebuild=force_rebuild)
 
     print(f"Indexed {len(index)} chunks")
 
