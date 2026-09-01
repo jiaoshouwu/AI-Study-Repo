@@ -236,7 +236,9 @@ def load_cached_index(signature: str) -> list[dict] | None:
     return index
 
 
-def load_or_build_index() -> list[dict]:
+def load_or_build_index(
+    force_rebuild: bool = False,
+) -> list[dict]:
 
     chunks = load_chunks()
 
