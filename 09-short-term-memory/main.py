@@ -9,6 +9,8 @@ MODEL = os.getenv(
     "gpt-5.6",
 )
 
+MAX_MESSAGES = 6
+
 ChatMessage = dict[str, str]  # type alias for chat messages
 
 INSTRUCTIONS = """
@@ -56,6 +58,8 @@ def chat_turn(
             "content": answer,
         }
     )
+
+    trim_history(history)
 
     return answer
 
@@ -107,6 +111,14 @@ def run_chat() -> None:
         )
 
         print(f"\nAI: {answer}\n")
+
+
+def trim_history(
+    history: list[ChatMessage],
+) -> None:
+
+    if len(history) > MAX_MESSAGES:
+        del history[:-MAX_MESSAGES]
 
 
 if __name__ == "__main__":
