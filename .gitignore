@@ -3,3 +3,4 @@ __pycache__/
 .env
 .DS_Store
 08-persistent-rag-state/cache/
+10-persistent-memory/data/
