@@ -21,6 +21,7 @@ class AgentState(TypedDict):
         "answered",
         "finished",
     ]
+    trace: list[str]
 
 
 def create_state(
@@ -31,6 +32,7 @@ def create_state(
         "answer": "",
         "step": 0,
         "status": "new",
+        "trace": [],
     }
 
 
@@ -39,8 +41,8 @@ def prepare_state(
 ) -> AgentState:
     state["step"] += 1
     state["status"] = "prepared"
+    state["trace"].append("prepare ")
 
-    print(f"Step {state['step']}: prepare ")
     return state
 
 
@@ -50,7 +52,7 @@ def answer_state(
     state["step"] += 1
     state["status"] = "answered"
 
-    print(f"Step {state['step']}: answer ")
+    state["trace"].append("answer ")
 
     response = client.responses.create(
         model=MODEL,
@@ -68,7 +70,7 @@ def finish_node(
     state["step"] += 1
     state["status"] = "finished"
 
-    print(f"Step {state['step']}: finish ")
+    state["trace"].append("finish ")
 
     return state
 
@@ -99,6 +101,8 @@ def main() -> None:
     print(f"Status: {state['status']}")
     print(f"Step: {state['step']}")
     print(f"Answer: {state['answer']}")
+
+    print("\nTrace:" + " -> ".join(state["trace"]))
 
 
 if __name__ == "__main__":
