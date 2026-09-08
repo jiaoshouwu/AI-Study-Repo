@@ -118,6 +118,8 @@ def run_agent(
 ) -> AgentState:
     graph = build_graph()
 
+    print(graph.get_graph().draw_mermaid())
+
     initial_state: AgentState = {
         "question": question,
         "answer": "",
