@@ -55,3 +55,32 @@ AgentState contains:
 - [x] complex question uses detailed_answer
 - [x] only one branch executes per invocation
 - [x] empty input does not execute the graph
+
+## graph
+
+```mermaid
+
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+        __start__([<p>__start__</p>]):::first
+        prepare(prepare)
+        classify(classify)
+        concise_answer(concise_answer)
+        detailed_answer(detailed_answer)
+        finish(finish)
+        __end__([<p>__end__</p>]):::last
+        __start__ --> prepare;
+        classify -. &nbsp;simple&nbsp; .-> concise_answer;
+        classify -. &nbsp;complex&nbsp; .-> detailed_answer;
+        concise_answer --> finish;
+        detailed_answer --> finish;
+        prepare --> classify;
+        finish --> __end__;
+        classDef default fill:#f2f0ff,line-height:1.2
+        classDef first fill-opacity:0
+        classDef last fill:#bfb6fc
+```

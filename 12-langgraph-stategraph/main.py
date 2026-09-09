@@ -34,7 +34,7 @@ def prepare_node(
     return {
         "step": step,
         "status": "prepared",
-        "trace": (state["trace"] + ["prepare"]),
+        "trace": state["trace"] + ["prepare"],
     }
 
 
@@ -55,7 +55,7 @@ def answer_node(
         "answer": response.output_text,
         "step": step,
         "status": "answered",
-        "trace": (state["trace"] + ["answer"]),
+        "trace": state["trace"] + ["answer"],
     }
 
 
@@ -69,7 +69,7 @@ def finish_node(
     return {
         "step": step,
         "status": "finished",
-        "trace": (state["trace"] + ["finish"]),
+        "trace": state["trace"] + ["finish"],
     }
 
 
