@@ -220,6 +220,17 @@ def run_agent(
     return result
 
 
+def validate_final_state(
+    state: AgentState,
+) -> None:
+    assert state["status"] == "finished"
+
+    assert state["attempt"] <= MAX_ATTEMPTS
+
+    if state["quality_ok"]:
+        assert "evaluate:pass" in state["trace"]
+
+
 def main() -> None:
     question = input("Question: ").strip()
 
@@ -229,6 +240,8 @@ def main() -> None:
         return
 
     state = run_agent(question)
+
+    validate_final_state(state)
 
     print("\n=== Final state ===")
 
