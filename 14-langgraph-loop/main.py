@@ -49,7 +49,7 @@ def draft_node(
 ) -> dict:
     attempt = state["attempt"] + 1
 
-    print(f"Attemp {attempt}: draft")
+    print(f"Attempt {attempt}: draft")
 
     response = client.responses.create(
         model=MODEL,
@@ -74,14 +74,15 @@ def evaluate_node(
 
     if quality_ok:
         decision = "finish"
+        result = "pass"
 
     elif state["attempt"] >= MAX_ATTEMPTS:
         decision = "finish"
+        result = "max_attempts"
 
     else:
         decision = "retry"
-
-    result = "pass" if quality_ok else decision
+        result = "retry"
 
     print(f"Evaluate: {word_count} words -> {result}")
 
@@ -110,7 +111,7 @@ def revise_node(
 ) -> dict:
     attempt = state["attempt"] + 1
 
-    print(f"Attemp {attempt}: revise")
+    print(f"Attempt {attempt}: revise")
 
     prompt = (
         f"Question: \n"
