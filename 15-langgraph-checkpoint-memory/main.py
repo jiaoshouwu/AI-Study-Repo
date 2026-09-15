@@ -152,6 +152,26 @@ def show_state(graph: CompiledStateGraph, thread_id: str) -> None:
         print(f" {item}")
 
 
+def show_checkpoints(
+    graph: CompiledStateGraph,
+    thread_id: str,
+) -> None:
+    snapshots = list(graph.get_state_history(make_config(thread_id)))
+
+    print(f"Checkpoints: {len(snapshots)}")
+
+    for snapshot in snapshots[:5]:
+        print(
+            "turn_count=",
+            snapshot.values.get(
+                "turn_count",
+                0,
+            ),
+            "next=",
+            snapshot.next,
+        )
+
+
 def main() -> None:
     graph = build_graph()
 
@@ -176,6 +196,13 @@ def main() -> None:
 
         if text == "/state":
             show_state(
+                graph,
+                thread_id,
+            )
+            continue
+
+        if text == "/checkpoints":
+            show_checkpoints(
                 graph,
                 thread_id,
             )

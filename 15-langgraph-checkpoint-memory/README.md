@@ -45,3 +45,8 @@ START
 - [x] different threads have isolated state
 - [x] switching back restores previous state
 - [x] process restart clears InMemorySaver
+
+## Extra
+Add the snapshots of checkpoints (states)
+
+
