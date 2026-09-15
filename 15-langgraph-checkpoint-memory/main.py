@@ -138,7 +138,7 @@ def show_state(graph: CompiledStateGraph, thread_id: str) -> None:
     print(
         "Turn count:",
         state.get(
-            "Turn_count",
+            "turn_count",
             0,
         ),
     )
