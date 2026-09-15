@@ -41,7 +41,7 @@ START
 
 ## Tests
 
-- [ ] same thread remembers previous state
-- [ ] different threads have isolated state
-- [ ] switching back restores previous state
-- [ ] process restart clears InMemorySaver
+- [x] same thread remembers previous state
+- [x] different threads have isolated state
+- [x] switching back restores previous state
+- [x] process restart clears InMemorySaver
