@@ -22,6 +22,11 @@ class AgentState(TypedDict, total=False):
     trace: list[str]
 
 
+class ReviewDecision(TypedDict):
+    approved: bool
+    reason: str
+
+
 def plan_node(
     state: AgentState,
 ) -> dict:
@@ -45,7 +50,8 @@ def review_node(
         {
             "question": ("Do you approve this action?"),
             "plan": state["plan"],
-        }
+        },
+        response_schema=ReviewDecision,
     )
 
     approved = decision["approved"]
